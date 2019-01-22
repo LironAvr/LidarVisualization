@@ -1,0 +1,42 @@
+<html>
+<body>
+<canvas id="mycanvas" width="400" height="400">Your browser does not support the HTML5 canvas tag.</canvas>
+</body>
+</html>
+<script>
+
+    for(i=0;i<=360;i++){
+      var canvas = document.getElementById("mycanvas");
+      draw(canvas, i, Math.random()*100);
+    }
+
+
+    function draw(canvas, angle, radius){
+        var context = canvas.getContext('2d'), centerX = Math.floor(canvas.width / 2), centerY = Math.floor(canvas.height / 2),radius1 = Math.floor(canvas.width / 2);
+        context.lineWidth = 1;
+        context.strokeStyle = 'red';
+        var begin = 0; interval = 90;
+        var arcSize= degreesToRadians(interval);
+        context.beginPath();
+        context.moveTo(centerX,centerY);
+        //context.lineTo(radius,degreesToRadians((-1) * angle));
+        context.arc(centerX,centerY,radius, degreesToRadians((-1) * angle), degreesToRadians((-1) * angle),false);
+        context.closePath();
+        context.stroke();
+        // draw circle
+        context.strokeStyle = 'black';
+        context.lineWidth = 2;
+        for(var startingAngle=begin; startingAngle < 360;){
+            context.beginPath();
+            context.moveTo(centerX, centerY);
+            context.arc(centerX, centerY, radius1, degreesToRadians(startingAngle), startingAngle + arcSize, false);
+            context.closePath();
+            context.stroke();
+            startingAngle = startingAngle + interval;
+        }
+    }
+
+    function degreesToRadians(degrees) {
+        return (degrees * Math.PI)/180;
+    }
+</script>

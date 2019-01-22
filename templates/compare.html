@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<!--header-->
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Index | </title>
+   <!-- jQuery -->
+    <!--<script src="[[ url_for('static', filename='vendors/jquery/dist/jquery.min.js') ]]"></script>-->
+    <script
+			  src="https://code.jquery.com/jquery-1.12.4.min.js"
+			  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+			  crossorigin="anonymous"></script>
+    <!-- Angularjs -->
+    <script src="[[ url_for('static', filename='vendors/angularjs/angular.min.js') ]]"></script>
+
+
+
+
+
+
+</head>
+<!--/header-->
+<body class="nav-md" ng-app="submitExample" ng-controller="ExampleController" ng-cloak>
+<div>Angle: {{angle}}</div>
+<div>Distance: {{distance}}, Error: {{error}}</div>
+<div>Processing: {{samples}}/{{total}}</div>
+<div>{{finished}}</div>
+<canvas id="mycanvas" width="650" height="650">Your browser does not support the HTML5 canvas tag.</canvas>
+</body>
+
+
+
+
+<script>
+
+    var app = angular.module('submitExample',[]);
+    app.controller('ExampleController', ['$scope', '$log', '$http', '$location', function($scope, $log, $http, $location) {
+        $scope.id = 0;
+        $scope.results = [];
+        $scope.angle = 0;
+        $scope.distance = 0;
+        $scope.samples = 0;
+        $scope.total = 0;
+        $scope.error = [];
+        $scope.finished = '';
+
+        // Hàm phóng to
+        function zoom() {
+          var transform = d3.event.transform;
+          context.save();
+          context.clearRect(0, 0, width, height);
+          context.translate(transform.x, transform.y);
+          context.scale(transform.k, transform.k);
+          draw();
+          context.restore();
+        }
+
+        // Lấy tọa độ con trỏ
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+              x: evt.clientX - rect.left,
+              y: evt.clientY - rect.top
+            };
+        }
+
+        // Đổi góc sang radian
+        function degreesToRadians(degrees) {
+            return (degrees * Math.PI)/180;
+        }
+
+        // Định nghĩa canvas
+        var canvas = document.getElementById("mycanvas");
+        var context = canvas.getContext('2d'), centerX = Math.floor(canvas.width / 2), centerY = Math.floor(canvas.height / 2),radius1 = Math.floor(canvas.width / 2);
+
+
+        // Vẽ khung radar
+        var begin = 0;
+        var interval = 90;
+        var arcSize= degreesToRadians(interval);
+        context.strokeStyle = 'black';
+        context.lineWidth = 2;
+        for(var startingAngle=begin; startingAngle < 360;){
+            context.beginPath();
+            context.moveTo(centerX, centerY);
+            context.arc(centerX, centerY, 300, degreesToRadians(startingAngle), startingAngle + arcSize, false);
+            context.closePath();
+            context.stroke();
+            startingAngle = startingAngle + interval;
+        }
+
+        // Hàm vẽ tia
+        $scope.draw = function(angle, radius){
+            //context.lineWidth = 1;
+            //context.strokeStyle = 'red';
+            var begin = 0; interval = 90;
+            var arcSize= degreesToRadians(interval);
+            context.beginPath();
+            context.moveTo(centerX,centerY);
+            //context.arc(centerX,centerY,radius, degreesToRadians((-1) * angle), degreesToRadians((-1) * angle),false);
+            //context.closePath();
+            //context.stroke();
+            if($scope.id == 0){
+                context.fillStyle="red";
+            }
+            if($scope.id == 1){
+                context.fillStyle="blue";
+            }
+            context.fillRect(centerX+(radius*Math.cos(degreesToRadians((-1) * angle))),centerY-(radius*Math.sin(degreesToRadians( angle))),1,1);
+            canvas.addEventListener('mousemove', function(evt) {
+                var mousePos = getMousePos(canvas, evt);
+                if(mousePos.x==(centerX+(radius*Math.cos(degreesToRadians((-1) * angle)))).toFixed() && mousePos.y==(centerY-(radius*Math.sin(degreesToRadians( angle)))).toFixed()){
+                    var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+                    console.log('angle:'+angle+', radius:'+radius+', position:'+message);
+                    $scope.$apply(function () {
+                        $scope.angle = angle;
+                    });
+                    $scope.$apply(function () {
+                        $scope.distance = radius;
+                    });
+                }
+            }, true);
+        }
+
+        // Hàm chính vẽ tia
+        $scope.drawLidar = function(q,i){
+                for(j=0;j<360;j++){
+                    $scope.draw(j, q[i][j][0]/50);
+                    if((q[i][j][0]/5)==0)
+                        $scope.error.push(j);
+            }
+            //alert($scope.error.length);
+            $scope.id+=1;
+            $scope.$apply(function () {
+                $scope.samples = $scope.id;
+            });
+        }
+
+
+        // Test draw
+        function drawtest(angle, radius){
+            context.lineWidth = 1;
+            context.strokeStyle = 'red';
+            var begin = 0; interval = 90;
+            var arcSize= degreesToRadians(interval);
+            context.beginPath();
+            context.moveTo(centerX,centerY);
+            context.arc(centerX,centerY,radius, degreesToRadians((-1) * angle), degreesToRadians((-1) * angle),false);
+            context.closePath();
+            context.stroke();
+        }
+
+
+
+        //drawtest(45,100);
+        //context.fillRect(centerX+(100*Math.sin(degreesToRadians(45))),centerY-(100*Math.cos(degreesToRadians(45))),1,1);
+
+        // Lấy dữ liệu theo thời gian thực
+        function get_data() {
+            // fire the API request
+            $http({
+                method: 'post',
+                url: '/get_compare_data_api',
+                data: {},
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).
+            then(function(response) {
+                $scope.results = response.data;
+                 $scope.total = $scope.results.length;
+
+            }, function(response) {
+                results = response.data || 'Request failed';
+            })
+        };
+        get_data();
+        window.setInterval(function(){
+            if($scope.results.length>0 && $scope.id<$scope.results.length){
+                $scope.drawLidar($scope.results,$scope.id);
+                if($scope.id==$scope.results.length){
+                    $scope.$apply(function () {
+                            $scope.finished = 'Done!';
+                    });
+                }
+            }
+
+        }, 1);
+
+
+        }])
+
+
+
+</script>
+
+</html>
