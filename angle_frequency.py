@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-from config import *
-from flask import *
 import pickle
 
 ### Define which data will be loaded
 DATA = "benign_7"
-DATA_TO_COMPARE = "mall"  # Optional
 ###
 
 ### Define Data Format
@@ -113,86 +109,53 @@ class Data:
             filename = 'ldscan_current.pkl'
             scan = read_file(filename)
             self._scans.append(scan)
+
+
 ### End Define Data Format
 
-
-### Load data
-# Data default
+# Data 0
 train_x = []
 data = Data()
-data.read_data(DATA)
+data.read_data('benign_7')
 for i in data._scans:
     train_x_x = []
     for j in range(0, 360):
         train_x_x.append([i.distances[j], i.errors[j], i.intensities[j]])
     train_x.append(train_x_x)
 
-# Data optional for comparison
-train_x1 = []
-data1 = Data()
-data1.read_data(DATA_TO_COMPARE)
-for i in data1._scans:
-    train_x_x = []
+a = []
+for i in range(0, 360):
+    a.append(0)
+
+for i in train_x:
     for j in range(0, 360):
-        train_x_x.append([i.distances[j], i.errors[j], i.intensities[j]])
-    train_x1.append(train_x_x)
+        if i[j][1] > 0:
+            a[j] += 1
+b = {}
+c = []
+for i in range(len(a)):
+    if a[i] != '':
+        if a[i] not in c:
+            c.append(a[i])
+        b[str(i)] = a[i]
 
-sample1 = train_x[0]
-if train_x1 != []:
-    sample2 = train_x1[0]
-else:
-    sample2 = []
-samples = []
-samples.append(sample1)
-samples.append(sample2)
-### End Load data
+c.sort()
+c.reverse()
+d = {}
+for i in c:
+    e = []
+    for j in range(len(a)):
+        if a[j] == i:
+            e.append(j)
+    d[i] = e
 
+for i in c:
+    print(str(d[i]) + ':' + str(i) + ' times')
 
-# Main program
-# Define web environment variable
-app = Flask(__name__)
-# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.secret_key = "fasdfsdfsdfasdfs"
-# app update
-jinja_options = app.jinja_options.copy()
-jinja_options.update(dict(
-    variable_start_string='[[',
-    variable_end_string=']]'
-))
-app.jinja_options = jinja_options
-
-
-# Routing index
-@app.route('/', methods=['POST', 'GET'])
-@app.route('/index', methods=['POST', 'GET'])
-def index():
-    return render_template('index.html')
-
-
-# Routing comparison page
-@app.route('/compare', methods=['POST', 'GET'])
-def compare():
-    return render_template('compare.html')
-
-
-# API get data
-@app.route('/get_data_api', methods=['POST', 'GET'])
-def get_data_api():
-    if request.method == 'POST':
-        return json.dumps(train_x)
-    return 'nothing'
-
-
-# API get 2 data samples
-@app.route('/get_compare_data_api', methods=['POST', 'GET'])
-def get_compare_data_api():
-    if request.method == 'POST':
-        return json.dumps(samples)
-    return 'nothing'
-
-
-# WebApp run
-app.run(debug=True, host='127.0.0.1', port=5000, threaded=True)
-SESSION_TYPE = 'redis'
-app.config.from_object(__name__)
-Session(app)
+ignore = []
+ignore1 = []
+for i in c:
+    if i >= 1:
+        ignore += d[i]
+    else:
+        ignore1 += d[i]

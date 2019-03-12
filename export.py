@@ -1,34 +1,14 @@
 # -*- coding: utf-8 -*-
 from config import *
-# import StringIO
-# import hashlib
-# import os
-# import random
-# import re
-# import sys
-# from html_decode_support import stringToConvert
-# import uuid
-# import re
-# import urllib2
-# from random import randint
-# from urlparse import urlparse
-# import time
-# import oauth2
-# import urllib2
-# import requests
-# from bs4 import BeautifulSoup
-# from docx import Document
-# from docx.shared import Inches
-# from docxtpl import DocxTemplate, InlineImage, R
-# from elasticsearch import Elasticsearch
-from flask import *
-# from flask_httpauth import HTTPBasicAuth
-# from extensions import *
-# from sqlite import *
-# from es import *
 import pickle,csv
 
 
+### Define which data will be loaded
+DATA = "mal"
+###
+
+
+### Define Data Format
 class LidarScan:
     def __init__(self, ldscan):
         self.distances = []
@@ -60,7 +40,6 @@ def read_file(filename):
     a = pickle.load(output)
     output.close()
     return a
-
 
 class Data:
     def __init__(self):
@@ -115,11 +94,12 @@ class Data:
             filename = 'ldscan_current.pkl'
             scan = read_file(filename)
             self._scans.append(scan)
+### End Define Data Format
 
-train_x=[]
+
 data = Data()
-data.read_data('mal_3')
-with open('mal.csv', "w") as csvfile:
+data.read_data(DATA)
+with open(DATA+'.csv', "w") as csvfile:
     csvwriter = csv.writer(csvfile, delimiter=',')
     for i in data._scans:
         for j in range(0, 360):

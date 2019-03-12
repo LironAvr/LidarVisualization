@@ -1,10 +1,4 @@
 Flask-HTTPAuth
 python-docx
-functools
 flask_kvsession
-oauth2
 requests
-bs4
-elasticsearch
-pyopenssl
-docxtpl

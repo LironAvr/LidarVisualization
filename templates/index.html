@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <!--header-->
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -17,17 +16,13 @@
 			  crossorigin="anonymous"></script>
     <!-- Angularjs -->
     <script src="[[ url_for('static', filename='vendors/angularjs/angular.min.js') ]]"></script>
-
-
-
-
-
-
 </head>
 <!--/header-->
+
 <body class="nav-md" ng-app="submitExample" ng-controller="ExampleController" ng-cloak>
 <div>Angle: {{angle}}</div>
-<div>Distance: {{distance}}, Error: {{error}}</div>
+<div>Distance: {{distance}}</div>
+<!--Error: {{error}}-->
 <div>Processing: {{samples}}/{{total}}</div>
 <div>{{finished}}<button ng-click="pause_f()">Pause</button></div>
 <input type="text" ng-model="angle_input">
@@ -39,11 +34,8 @@
 <canvas id="mycanvas" width="650" height="650">Your browser does not support the HTML5 canvas tag.</canvas>
 </body>
 
-
-
-
+<!--AngularJS-->
 <script>
-
     var app = angular.module('submitExample',[]);
     app.controller('ExampleController', ['$scope', '$log', '$http', '$location', function($scope, $log, $http, $location) {
         $scope.id = 0;
@@ -59,7 +51,8 @@
         $scope.error = [];
         $scope.pause = false;
 
-        // Hàm xem thông tin
+
+        // function see information
         $scope.show_information = function(){
             $scope.distance_s = $scope.current_sample[$scope.angle_input][0]/$scope.scale;
             $scope.error_s = $scope.current_sample[$scope.angle_input][1];
@@ -67,18 +60,7 @@
         }
 
 
-        // Hàm phóng to
-        function zoom() {
-          var transform = d3.event.transform;
-          context.save();
-          context.clearRect(0, 0, width, height);
-          context.translate(transform.x, transform.y);
-          context.scale(transform.k, transform.k);
-          draw();
-          context.restore();
-        }
-
-        // Lấy tọa độ con trỏ
+        // function get mouse position
         function getMousePos(canvas, evt) {
             var rect = canvas.getBoundingClientRect();
             return {
@@ -87,17 +69,19 @@
             };
         }
 
-        // Đổi góc sang radian
+
+        // function converting degrees to radians
         function degreesToRadians(degrees) {
             return (degrees * Math.PI)/180;
         }
 
-        // Định nghĩa canvas
+
+        // Define canvas
         var canvas = document.getElementById("mycanvas");
         var context = canvas.getContext('2d'), centerX = Math.floor(canvas.width / 2), centerY = Math.floor(canvas.height / 2),radius1 = Math.floor(canvas.width / 2);
 
 
-        // Vẽ khung radar
+        // function drawing radar frame
         $scope.drawRadar = function(){
             var begin = 0;
             var interval = 90;
@@ -114,7 +98,7 @@
             }
         }
 
-        // Hàm vẽ tia
+        // function draw dots
         $scope.draw = function(angle, radius){
             context.lineWidth = 1;
             context.strokeStyle = 'red';
@@ -143,7 +127,7 @@
             }, true);
         }
 
-        // Hàm chính vẽ tia
+        // main function for drawing dots
         $scope.drawLidar = function(q,i){
             if($scope.pause!=true){
                 // Vẽ lại
@@ -185,7 +169,7 @@
         //drawtest(45,100);
         //context.fillRect(centerX+(100*Math.sin(degreesToRadians(45))),centerY-(100*Math.cos(degreesToRadians(45))),1,1);
 
-        // Pause
+        // function Pause
         $scope.pause_f = function(){
             //if($scope.pause==true)
                 //$scope.pause=false;
@@ -194,7 +178,7 @@
             $scope.pause ^= true;
         }
 
-        // Lấy dữ liệu theo thời gian thực
+        // Get data in real time
         function get_data() {
             // fire the API request
             $http({
@@ -229,8 +213,7 @@
 
         }])
 
-
-
 </script>
+<!--/AngularJS-->
 
 </html>
