@@ -131,7 +131,7 @@
         // Hàm chính vẽ tia
         $scope.drawLidar = function(q,i){
                 for(j=0;j<360;j++){
-                    $scope.draw(j, q[i][j][0]/50);
+                    $scope.draw(j, q[i][j][0]/10);
                     if((q[i][j][0]/5)==0)
                         $scope.error.push(j);
             }

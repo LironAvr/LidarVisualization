@@ -109,6 +109,8 @@ class Data:
                 scan = read_file(filename)
                 self._scans.append(scan)
 
+        ### Insert your definition here
+
         if name == 'current':
             filename = 'ldscan_current.pkl'
             scan = read_file(filename)
