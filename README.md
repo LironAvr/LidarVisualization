@@ -23,7 +23,7 @@ DATA = 'sample_name'
 # Run the program
 Run the run.bat file, wait for a while and access to http://127.0.0.1:5000. When a browser loading the page, it will load and visualize through each sample simultaneously, you can pause it by pressing the button.
 
-![Screenshot](image1.png "Logo Title Text 1")        
+![Screenshot](image1.PNG "Logo Title Text 1")        
 
 # Check angle information
 
