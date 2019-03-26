@@ -4,7 +4,7 @@
 In order to load your sample (generated from botvac application), you need to modify the following parts: 
 
 
-Find this line and insert your code bellow that:
+Find this line in main.py file and insert your code bellow it:
 ````
 ### Insert your definition here
 ````
