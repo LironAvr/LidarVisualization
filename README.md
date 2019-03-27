@@ -16,9 +16,9 @@ if name == 'sample_name':
         scan = read_file(filename)
         self._scans.append(scan)
 ````
-you also need to modify that:
+In which, sample_name, start_number, end_number need to rewrite. You also need to modify this variable to your defined sample name:
 ````
-DATA = 'sample_name'
+DATA = 'sample_name' #for example
 ````
 # Run the program
 Run the run.bat file, wait for a while and access to http://127.0.0.1:5000. When a browser loading the page, it will load and visualize through each sample simultaneously, you can pause it by pressing the button.
