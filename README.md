@@ -1,7 +1,7 @@
 
 # Define sample data
 
-In order to load your sample (generated from botvac application), you need to modify the following parts: 
+In order to load your sample (generated from botvac application), you need to modify the following parts (Note: using Python 3): 
 
 
 Find this line in main.py file and insert your code bellow it:
